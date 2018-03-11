@@ -2,42 +2,41 @@ package server
 
 import (
 	"bufio"
-	"net"
+	"errors"
 	"io"
+	"net"
 	"strconv"
 	"strings"
-	"errors"
 
 	"github.com/sahilahmadlone/MessagingSocketServer/config"
 	"github.com/sahilahmadlone/MessagingSocketServer/logger"
 )
+
 //Sequence counter for dispatcher
 var SequenceNum int
 
 //Server attributes for shutdown
 type Server struct {
-	finished      chan struct{}
-	IsRunning	bool
-	UListener 	net.Listener
-	EListener       net.Listener
+	finished  chan struct{}
+	IsRunning bool
+	UListener net.Listener
+	EListener net.Listener
 }
 
 //Event struct for parsing and processing
 type Event struct {
-	sequence int
-	eventType       string
-	fromUserId     int
-	toUserId       int
-	payload string
+	sequence   int
+	eventType  string
+	fromUserId int
+	toUserId   int
+	payload    string
 }
 
 //User client struct for parsing and notifying
 type UserClient struct {
-	userId int
+	userId     int
 	connection net.Conn
 }
-
-
 
 //Sets up the dispatcher with channels for when events start arriving
 //Starts Server listening on specified ports from configuration (param)
@@ -62,15 +61,12 @@ func Run(config config.ServerConfig) (*Server, error) {
 		recover()
 		return nil, err
 	}
-	logger.Info("Listening on Ports ", strconv.Itoa(config.EventListenerPort)," and ", strconv.Itoa(config.ClientListenerPort))
+	logger.Info("Listening on Ports ", strconv.Itoa(config.EventListenerPort), " and ", strconv.Itoa(config.ClientListenerPort))
 
 	go acceptAndServeUsers(userChannel, us, finished)
 	go acceptAndServeEvents(eventChannel, es, finished)
 	return &Server{finished, true, us, es}, nil
 }
-
-
-
 
 //When listener receives event, this method handles it
 //in a goroutine -- reading in the message, parsing the message, assigning values to
@@ -99,29 +95,29 @@ func handleEventConns(connection net.Conn, eventChan chan<- Event) {
 
 }
 
-
 //Similar to handling event messages, this method
 //reads the message from userClient, parses the clientID,
 //creates appropriate UserClient struct and sends
 //`UserClient` to the user channel
 func handleUserConns(connection net.Conn, userChan chan<- UserClient) {
-		b := bufio.NewReader(connection)
-		m, err := b.ReadString('\n')
-		msg := string(m)
-		msg = strings.Trim(msg, "\n")
-		msg = strings.Trim(msg, "\r")
-		userID, err := strconv.Atoi(msg)
-		if err != nil {
-			logger.Error("Bad User Request ", err)
-		}
+	b := bufio.NewReader(connection)
+	m, err := b.ReadString('\n')
+	msg := string(m)
+	msg = strings.Trim(msg, "\n")
+	msg = strings.Trim(msg, "\r")
+	userID, err := strconv.Atoi(msg)
+	if err != nil {
+		logger.Error("Bad User Request ", err)
+	}
 
-		userClient := UserClient{
-			userId: userID,
-			connection: connection,
-		}
-		userChan <- userClient
+	userClient := UserClient{
+		userId:     userID,
+		connection: connection,
+	}
+	userChan <- userClient
 
 }
+
 //Locally creates maps to keep track of received events,
 // notifying userClients in the appropriate order,
 // and avoid race conditions.
@@ -167,8 +163,8 @@ func dispatcher(finished chan struct{}) (chan<- UserClient, chan<- Event, error)
 						select {
 						case event = <-evChan:
 							logger.Debug("Writing to user ", conUser.userId)
-							_, err := conUser.connection.Write([]byte(event.payload+"\r"+"\n"))
-							if err!= nil {
+							_, err := conUser.connection.Write([]byte(event.payload + "\r" + "\n"))
+							if err != nil {
 								logger.Error(err)
 							}
 						case <-finished:
@@ -191,7 +187,7 @@ func dispatcher(finished chan struct{}) (chan<- UserClient, chan<- Event, error)
 //Takes in listener and user channel (and finished) as params
 //Accepts connection and sends it to the connection channel
 //In that event calls goroutine to handle user connections appropriately
-func acceptAndServeUsers(userChan chan<-UserClient, listener net.Listener, finished chan struct{}) {
+func acceptAndServeUsers(userChan chan<- UserClient, listener net.Listener, finished chan struct{}) {
 	for {
 		connectionChannel := make(chan net.Conn)
 		go func() {
@@ -213,7 +209,7 @@ func acceptAndServeUsers(userChan chan<-UserClient, listener net.Listener, finis
 
 //Similar to acceptAndServeUsers, once a connection is made it's sent to connectionChannel
 //In that event the goroutine to handle and process events is started
-func acceptAndServeEvents(eventChan chan<-Event, listener net.Listener, finished chan struct{}) {
+func acceptAndServeEvents(eventChan chan<- Event, listener net.Listener, finished chan struct{}) {
 	for {
 		connectionChannel := make(chan net.Conn)
 		go func() {
@@ -296,7 +292,7 @@ func parseEventMessage(msg string) (*Event, error) {
 	case "F":
 		event.eventType = "F"
 		parsedEvent, err := parseUserIds(ef, event)
-		if err != nil{
+		if err != nil {
 			logger.Error(err)
 			return nil, err
 		}
@@ -305,7 +301,7 @@ func parseEventMessage(msg string) (*Event, error) {
 	case "U":
 		event.eventType = "U"
 		parsedEvent, err := parseUserIds(ef, event)
-		if err != nil{
+		if err != nil {
 			logger.Error(err)
 			return nil, err
 		}
@@ -342,7 +338,7 @@ func parseEventMessage(msg string) (*Event, error) {
 //Helper function for parseEventMessage that processes the userIds
 //of a given message
 //Will error and continue to listen if input is bad
-func parseUserIds(splitMsg []string, event Event) (*Event, error){
+func parseUserIds(splitMsg []string, event Event) (*Event, error) {
 	if len(splitMsg) != 4 {
 		logger.Error("Bad Request ", event.payload)
 		err := errors.New("Invalid Request")

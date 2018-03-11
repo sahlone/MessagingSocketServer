@@ -1,16 +1,16 @@
 package logger_test
 
 import (
-	"testing"
-	"strings"
-	"os"
 	"io/ioutil"
+	"os"
+	"strings"
+	"testing"
 	"time"
 
 	"github.com/sahilahmadlone/MessagingSocketServer/logger"
 )
 
-func TestServer_LoggerLevelSuccess(t *testing.T){
+func TestServer_LoggerLevelSuccess(t *testing.T) {
 	err := logger.SetLevel("all")
 	if err != nil {
 		t.Error(err)
@@ -27,7 +27,7 @@ func TestServer_LoggerLevelSuccess(t *testing.T){
 	}
 
 }
-func TestServer_LoggerLevelFail(t *testing.T){
+func TestServer_LoggerLevelFail(t *testing.T) {
 	err := logger.SetLevel("Error")
 	if err != nil {
 		t.Error(err)
@@ -44,10 +44,10 @@ func TestServer_LoggerLevelFail(t *testing.T){
 	}
 
 }
-func TestServer_LoggerLevelInvalid(t *testing.T){
+func TestServer_LoggerLevelInvalid(t *testing.T) {
 	err := logger.SetLevel("eva")
 	if err == nil {
-		t.Error("Incorrect Logging Level Set, should have errored" )
+		t.Error("Incorrect Logging Level Set, should have errored")
 	}
 
 	if !strings.Contains(err.Error(), "INVALID") {

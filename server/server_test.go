@@ -1,15 +1,15 @@
 package server_test
 
 import (
-	"testing"
+	"io"
+	"net"
 	"os"
 	"os/exec"
-	"net"
-	"io"
 	"strings"
+	"testing"
 
-	"github.com/sahilahmadlone/MessagingSocketServer/logger"
 	"github.com/sahilahmadlone/MessagingSocketServer/config"
+	"github.com/sahilahmadlone/MessagingSocketServer/logger"
 	"github.com/sahilahmadlone/MessagingSocketServer/server"
 )
 

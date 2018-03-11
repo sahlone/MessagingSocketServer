@@ -1,9 +1,8 @@
 package config
 
-
 import (
-	"os"
 	"encoding/json"
+	"os"
 
 	"github.com/sahilahmadlone/MessagingSocketServer/logger"
 )
@@ -14,10 +13,10 @@ import (
 //All configurations passed by commandline must be space delimited
 //If no commandline arguments are passed, default configs are used
 type ServerConfig struct {
-	LogLevel	string
-	EventListenerPort	int
-	ClientListenerPort	int
-	SequenceNumber	int
+	LogLevel           string
+	EventListenerPort  int
+	ClientListenerPort int
+	SequenceNumber     int
 }
 
 //Loads default configuration for the Server from conf.json
@@ -25,7 +24,7 @@ type ServerConfig struct {
 //using feature flags or a puppet-like tool to avoid code changes upon config update.
 func ServerDefaultConfig(path string) *ServerConfig {
 	var conf ServerConfig = ServerConfig{}
-	file, err := os.Open(path+"conf.json")
+	file, err := os.Open(path + "conf.json")
 	if err != nil {
 		logger.Error("FileError", err)
 	}
@@ -37,4 +36,3 @@ func ServerDefaultConfig(path string) *ServerConfig {
 	logger.SetLevel(conf.LogLevel)
 	return &conf
 }
-
