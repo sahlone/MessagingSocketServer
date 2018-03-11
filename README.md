@@ -1,10 +1,10 @@
-#Socket Server
+# Socket Server
 
-##Dependencies
+## Dependencies
 1. JDK 7 VM
 2. Golang 1.8 or later
 
-##Setup
+## Setup
 1. Clone the repo.
 2. Setup go workspace appropriately (if not already setup)
 3. `cd $GOPATH/github.com/sahilahmadlone/MessagingSocketServer`
@@ -13,7 +13,7 @@
 6. Provided tests can be used the validate the build.
 6. To run tests run `./followermaze.sh`
 
-##Server Configurations
+## Server Configurations
 The following parameters are configurable:
    - **logLevel**: Set log level for custom logger.
    - **clientListenerPort**: The Port the server will listen for user clients on.
@@ -27,7 +27,7 @@ Any configurations not set by commandline will default to configurations set in 
 
 Please use environment variables to set configurations for `./followermaz.sh` program.
 
-##Makefile
+## Makefile
 The Makefile contains 4 directives. <br />
 1. `make fmt` -> runs `go fmt` on current and all subdirectories. <br />
 2. `make vet` -> runs `go vet` on current and all subdirectories. <br />
@@ -35,7 +35,7 @@ The Makefile contains 4 directives. <br />
 4. `make bench` -> executes shell that runs a few benchmark tests for server performance. <br />
 This makefile is where I would additional features dependent on third-party libraries (e.g. structcheck, swagger annotations and doc generation, additional testing libraries, and custom error generation if needed)
 
-##Logging
+## Logging
 This implementation includes a custom logger. Options for logging level can be set in `conf.json`.<br />
 Options include "All", "Debug", "Info", "Warn", and "Error". <br />
 The default configuration is set to "INFO" but can be set to "Debug" for more in-depth look at the program.
