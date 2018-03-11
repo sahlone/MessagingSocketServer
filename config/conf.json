@@ -1,0 +1,6 @@
+{
+  "logLevel": "INFO",
+  "eventListenerPort": 9090,
+  "clientListenerPort": 9099,
+  "sequenceNumber": 1
+}
